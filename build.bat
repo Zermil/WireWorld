@@ -1,2 +1,2 @@
 @echo off
-g++ -O2 -Wall -std=c++17 -pedantic ./src/*.cpp *.cpp -o main
+g++ -O3 -std=c++14 ./src/*.cpp *.cpp -o main

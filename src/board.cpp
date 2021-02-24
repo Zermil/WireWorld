@@ -1,186 +1,199 @@
-#include <iostream>
-#include <cassert>
 #include <conio.h>
 #include "./board.h"
 
-Board::Board(int rows, int cols) :
-    states(rows, std::vector<State>(cols, State::EMPTY))
+Board::Board(size_t row, size_t col) : 
+	initial_board(row, std::vector<State>(col, State::EMPTY)),
+	buffer_board(row, std::vector<State>(col, State::EMPTY)),
+	initializer({ static_cast<int>(col / 2), static_cast<int>(row / 2) })
 {
-    initializer.posY = rows / 2;
-    initializer.posX = cols / 2;
+	// Just for my OCD
+}
+
+// the '+1' is important when specifying a column
+// it SHIFTS everything by ONE to the right, BECAUSE
+// we are drawing additional ONE character at the beginning '|'
+void Board::print_board(bool drawInitializer)
+{
+	for (size_t i = 0; i < initial_board.size(); ++i)
+	{
+		// setCursorPosition(0, i);
+		// std::cout << '|';
+
+		for (size_t j = 0; j < initial_board[0].size(); ++j)
+		{
+			if (((size_t)initializer.posX == j && (size_t)initializer.posY == i))
+			{
+				setCursorPosition((int)j + 1, (int)i);
+				std::cout << (drawInitializer ? 'X' : static_cast<char>(initial_board[i][j]));
+				continue;
+			}
+
+			if (initial_board[i][j] == buffer_board[i][j])
+				continue;
+
+			setCursorPosition((int)j + 1, (int)i);
+			std::cout << static_cast<char>(initial_board[i][j]);
+		}
+
+		// setCursorPosition((int)initial_board[0].size(), i);
+		// std::cout << "|\n";
+	}
+
+	std::cout.flush();
+
+	if (buffer_board != initial_board)
+		buffer_board = initial_board;
 }
 
 void Board::move_initializer(Direction direction)
 {
-    // Wrap around
-    switch (direction)
-    {
-    case Direction::UP:
-        initializer.posY = initializer.posY - 1 < 0 ? (int)states.size() - 1 : initializer.posY - 1;
-        break;
-    case Direction::DOWN:
-        initializer.posY = initializer.posY + 1 >= (int)states.size() ? 0 : initializer.posY + 1;
-        break;
-    case Direction::LEFT:
-        initializer.posX = initializer.posX - 1 < 0 ? (int)states[0].size() - 1 : initializer.posX - 1;
-        break;
-    case Direction::RIGHT:
-        initializer.posX = initializer.posX + 1 >= (int)states[0].size() ? 0 : initializer.posX + 1;
-        break;
-    default:
-        assert(false && "uwu, unreachable: unrecognized direction!");
-    }
-}
+	// Clear the previous initializer from console
+	// set it to whatever is in initial_board at that location
+	setCursorPosition(initializer.posX + 1, initializer.posY);
+	std::cout << static_cast<char>(initial_board[initializer.posY][initializer.posX]);
+	std::cout.flush();
 
-void Board::print(bool drawInitializer)
-{
-    system("cls");
-
-    for (size_t i = 0; i < states.size(); ++i)
-    {
-        std::cout << '|';
-        
-        for (size_t j = 0; j < states[0].size(); ++j)
-        {
-            if (drawInitializer && ((size_t)initializer.posX == j && (size_t)initializer.posY == i)) 
-            {
-                std::cout << 'X';
-                continue;
-            }
-
-            std::cout << LOOK_UP[static_cast<int>(states[i][j])];
-        }
-
-        std::cout << "|\n";
-    }
+	// Wrap around
+	switch (direction)
+	{
+	case Direction::UP:
+		initializer.posY = initializer.posY - 1 < 0 ? (int)initial_board.size() - 1 : initializer.posY - 1;
+		break;
+	case Direction::DOWN:
+		initializer.posY = initializer.posY + 1 >= (int)initial_board.size() ? 0 : initializer.posY + 1;
+		break;
+	case Direction::LEFT:
+		initializer.posX = initializer.posX - 1 < 0 ? (int)initial_board[0].size() - 1 : initializer.posX - 1;
+		break;
+	case Direction::RIGHT:
+		initializer.posX = initializer.posX + 1 >= (int)initial_board[0].size() ? 0 : initializer.posX + 1;
+		break;
+	default:
+		assert(false && "uwu, unreachable: unrecognized direction!");
+	}
 }
 
 void Board::update(Inst instruction)
 {
-    switch (instruction)
-    {
-    case Inst::INST_MU:
-        move_initializer(Direction::UP);
-        break;
-    case Inst::INST_MD:
-        move_initializer(Direction::DOWN);
-        break;
-    case Inst::INST_ML:
-        move_initializer(Direction::LEFT);
-        break;
-    case Inst::INST_MR:
-        move_initializer(Direction::RIGHT);
-        break;
-    case Inst::INST_CTE:
-        states[initializer.posY][initializer.posX] = State::EMPTY;
-        break;
-    case Inst::INST_CTEH:
-        states[initializer.posY][initializer.posX] = State::E_HEAD;
-        break;
-    case Inst::INST_CTET:
-        states[initializer.posY][initializer.posX] = State::E_TAIL;
-        break;
-    case Inst::INST_CTC:
-        states[initializer.posY][initializer.posX] = State::CONDUCTOR;
-        break;
-    default:
-        assert(false && "uwu OwO!, unreachable: instruction not recognized!");
-    }
+	switch (instruction)
+	{
+	case Inst::INST_MU:
+		move_initializer(Direction::UP);
+		break;
+	case Inst::INST_MD:
+		move_initializer(Direction::DOWN);
+		break;
+	case Inst::INST_ML:
+		move_initializer(Direction::LEFT);
+		break;
+	case Inst::INST_MR:
+		move_initializer(Direction::RIGHT);
+		break;
+	case Inst::INST_CTE:
+		initial_board[initializer.posY][initializer.posX] = State::EMPTY;
+		break;
+	case Inst::INST_CTEH:
+		initial_board[initializer.posY][initializer.posX] = State::E_HEAD;
+		break;
+	case Inst::INST_CTET:
+		initial_board[initializer.posY][initializer.posX] = State::E_TAIL;
+		break;
+	case Inst::INST_CTC:
+		initial_board[initializer.posY][initializer.posX] = State::CONDUCTOR;
+		break;
+	default: 
+		assert(false && "uwu OwO!, unreachable: instruction not recognized!");
+	}
 }
 
 int Board::count_neighbours(int row, int col)
 {
-    int neighbours_e_heads = 0;
+	int e_head_neighours = 0;
 
-    for (int i = -1; i < 2; ++i)
-    {
-        for (int j = -1; j < 2; ++j)
-        {
-            const int indexY = row + i;
-            const int indexX = col + j;
+	for (int i = -1; i < 2; ++i)
+	{
+		for (int j = -1; j < 2; ++j)
+		{
+			// Skip yourself
+			if (i == 0 && j == 0)
+				continue;
 
-            // Skip yourself
-            if (indexX == col && indexY == row)
-                continue;
+			const int row_index = row + i;
+			const int col_index = col + j;
 
-            // Don't count neighbours outside of boundaries
-            // no wrap, skips out of bounds neighbours
-            if (indexY < 0 || indexX < 0 || indexY >= (int)states.size() || indexX >= (int)states[0].size())
-                continue;
+			// neighbour outside of boundaries
+			if (row_index < 0 || col_index < 0 || col_index >= (int)initial_board[0].size() || row_index >= (int)initial_board.size())
+				continue;
 
-            // Only increment if the neighbour is E_HEAD (electron head)
-            if (states[indexY][indexX] == State::E_HEAD)
-                neighbours_e_heads++;
-        }
-    }
+			if (initial_board[row_index][col_index] == State::E_HEAD)
+				e_head_neighours++;
+		}
+	}
 
-    return neighbours_e_heads;
+	return e_head_neighours;
 }
 
-initialized_board Board::next_generation()
+states_board Board::get_next_states()
 {
-    initialized_board new_states
-        (states.size(), std::vector<State>(states[0].size(), State::EMPTY));
+	// static because we don't reallty care about 
+	// always initializing it with EMPTY, either
+	// way it's going to change every State inside it 
+	// according to initial_board
+	static states_board next_board(initial_board.size(), std::vector<State>(initial_board[0].size(), State::EMPTY));
 
-    for (size_t i = 0; i < states.size(); ++i)
-    {
-        for (size_t j = 0; j < states[0].size(); ++j)
-        {
-            State cell = states[i][j];
+	for (size_t i = 0; i < initial_board.size(); ++i)
+	{
+		for (size_t j = 0; j < initial_board[0].size(); ++j)
+		{
+			const State cell = initial_board[i][j];
 
-            switch (cell)
-            {
-            case State::EMPTY:
-                new_states[i][j] = State::EMPTY;
-                break;
-            case State::E_HEAD:
-                new_states[i][j] = State::E_TAIL;
-                break;
-            case State::E_TAIL:
-                new_states[i][j] = State::CONDUCTOR;
-                break;
-            case State::CONDUCTOR: {
-                const int conductor_neighbours = count_neighbours(i, j);
+			switch (cell)
+			{
+			case State::EMPTY:
+				next_board[i][j] = State::EMPTY;
+				break;
+			case State::E_HEAD:
+				next_board[i][j] = State::E_TAIL;
+				break;
+			case State::E_TAIL:
+				next_board[i][j] = State::CONDUCTOR;
+				break;
+			case State::CONDUCTOR: {
+				const int e_head_neighbours_count = count_neighbours(i, j);
+				next_board[i][j] = (e_head_neighbours_count == 1 || e_head_neighbours_count == 2) ? State::E_HEAD : State::CONDUCTOR;
+				break;
+			}
+			default:
+				assert(false && "uwu owo, unreachable: unrecognized state");
+			}
+		}
+	}
 
-                (conductor_neighbours == 1 || conductor_neighbours == 2) ? 
-                    new_states[i][j] = State::E_HEAD : new_states[i][j] = State::CONDUCTOR;
-
-                break;
-            }
-            default:
-                assert(false && "uwu owo, unreachable: unrecognized state");
-            }
-        }
-    }
-
-    return new_states;
+	return next_board;
 }
 
-void Board::start_loop()
+void Board::start_simulation()
 {
-    initialized_board original = states;
-    print(false);
-    
-    while (true)
-    {
-        const int c = _getch();
+	const states_board original = initial_board;
 
-        // 'e' = 101
-        // 'r' = 114
+	while (true)
+	{
+		print_board(false); // Just updates the board, changes the char at initializer
+		const int c = _getch();
 
-        if (c == 101)
-            break;
+		// 'e' = 101
+		// 'r' = 114
 
-        switch (c)
-        {
-        case 114:
-            states = original;
-            break;
-        default:
-            states = next_generation();
-            break;
-        }
+		if (c == 101)
+			break;
 
-        print(false);
-    }
+		switch (c)
+		{
+		case 114:
+			initial_board = original;
+			break;
+		default:
+			initial_board = get_next_states();
+		}
+	}
 }

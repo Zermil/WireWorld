@@ -1,21 +1,18 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
+#include <iostream>
 #include <vector>
+#include <cassert>
+
+#define WIN32_LEAN_AND_MEAN // Reduce global namespace pollution
+#include <Windows.h>
 
 enum class Direction {
 	UP,
 	DOWN,
 	LEFT,
 	RIGHT,
-};
-
-enum class State {
-	EMPTY,
-	E_HEAD,
-	E_TAIL,
-	CONDUCTOR,
-	STATES_SIZE,
 };
 
 enum class Inst {
@@ -29,25 +26,74 @@ enum class Inst {
 	INST_CTC,
 };
 
-typedef std::vector<std::vector<State>> initialized_board;
+enum class State : char {
+	EMPTY = ' ',
+	E_HEAD = 'O',
+	E_TAIL = 'o',
+	CONDUCTOR = '#',
+};
 
-struct Board {
-	const char LOOK_UP[static_cast<int>(State::STATES_SIZE)] = { ' ', 'O', 'o', '#' };
-	initialized_board states;
+// Helper function, clear screen
+static void cls()
+{
+	static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	COORD topLeft = { 0, 0 };
+
+	// Needed because we don't want to write out "junk" characters
+	std::cout.flush();
+
+	if (!GetConsoleScreenBufferInfo(hOut, &csbi))
+		assert(false && "uwu, we did a little fuckie wookie. Couldn't get console buffer info!");
+
+	DWORD length = csbi.dwSize.X * csbi.dwSize.Y;
+	DWORD written;
+
+	// Flood-fill the console with spaces to clear it
+	FillConsoleOutputCharacter(hOut, TEXT(' '), length, topLeft, &written);
+
+	// Reset attributes of every character, clear colours and such
+	FillConsoleOutputAttribute(hOut, csbi.wAttributes, length, topLeft, &written);
+
+	// Move the cursor back to (0, 0)
+	SetConsoleCursorPosition(hOut, topLeft);
+}
+
+// Helper function, set cursor position in console
+// x - column, y - row
+static void setCursorPosition(int x, int y)
+{
+	static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD coord = { (SHORT)x, (SHORT)y };
+
+	std::cout.flush();
+	
+	SetConsoleCursorPosition(hOut, coord);
+}
+
+typedef std::vector<std::vector<State>> states_board;
+
+class Board 
+{
+public:
+	Board(size_t, size_t);
+	void print_board(bool drawInitializer = true);
+	void update(Inst);
+	void start_simulation();
+	
+private:
+	states_board initial_board;
+	states_board buffer_board;
 
 	struct Initializer {
 		int posX;
 		int posY;
 	} initializer;
 
-	Board(int rows, int cols);
-
-	void move_initializer(Direction direction);
-	void print(bool drawInitializer = true);
-	void update(Inst instruction);
-	int count_neighbours(int row, int col);
-	initialized_board next_generation();
-	void start_loop();
+	void move_initializer(Direction);
+	int count_neighbours(int, int);
+	states_board get_next_states();
 };
 
 #endif // BOARD_H_
