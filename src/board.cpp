@@ -158,7 +158,8 @@ states_board Board::get_next_states()
 			case State::E_TAIL:
 				next_board[i][j] = State::CONDUCTOR;
 				break;
-			case State::CONDUCTOR: {
+			case State::CONDUCTOR: 
+			{
 				const int e_head_neighbours_count = count_neighbours(i, j);
 				next_board[i][j] = (e_head_neighbours_count == 1 || e_head_neighbours_count == 2) ? State::E_HEAD : State::CONDUCTOR;
 				break;

@@ -49,6 +49,7 @@ int main(int charc, char* argv[])
 	while (true)
 	{	
 		board.print_board(); // Drawing "again" because of initializer's position (NOT really again, just look for updates)
+
 		const int c = _getch();
 
 		// UP = 72
@@ -97,8 +98,8 @@ int main(int charc, char* argv[])
 			break;
 		}
 	}
-  
-  setCursorPosition(0, row);
+
+	setCursorPosition(0, row);
 	system("pause");
 	return 0;
 }
