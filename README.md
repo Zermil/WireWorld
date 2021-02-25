@@ -1,7 +1,7 @@
 # WireWorld
 Simple console simulation of [Wireworld](https://en.wikipedia.org/wiki/Wireworld) in C++ with added initialization.
 
-![preview](./preview.jpg)
+![preview](./preview_image.jpg)
 
 ## Quick start (Windows with g++)
 ### `Build`:
