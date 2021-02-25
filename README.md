@@ -28,10 +28,10 @@ After running the "program" input the size of the board, example:
 After that you'll enter 'Normal Mode'.
 ### `Normal Mode`:
 - `Arrow Keys`: Move
-- `'1'`: change state at indicator ('X') to empty -> ' '
-- `'2'`: change state at indicator ('X') to electron head -> 'O'
-- `'3'`: change state at indicator ('X') to electron tail -> 'o'
-- `'4'`: change state at indicator ('X') to conductor -> '#'
+- `'1'`: change state at indicator ('@') to empty -> ' '
+- `'2'`: change state at indicator ('@') to electron head -> 'O'
+- `'3'`: change state at indicator ('@') to electron tail -> 'o'
+- `'4'`: change state at indicator ('@') to conductor -> '#'
 - `SPACE`: Enter 'Simulation Mode'
 - `ESC`: Exit program
 
