@@ -41,13 +41,6 @@ void Board::draw_initial_state()
 
 		for (size_t j = 0; j < initial_board[0].size(); ++j)
 		{
-			if (j == initializer.posX && i == initializer.posY)
-			{
-				setCursorPosition(j + 1, i);
-				std::cout << static_cast<char>(State::INITIALIZER);
-				continue;
-			}
-
 			setCursorPosition(j + 1, i);
 			std::cout << static_cast<char>(initial_board[i][j]);
 		}
@@ -56,6 +49,8 @@ void Board::draw_initial_state()
 		std::cout << "|\n";
 	}
 
+	setCursorPosition(initializer.posX + 1, initializer.posY);
+	std::cout << static_cast<char>(State::INITIALIZER);
 	std::cout.flush();
 }
 
