@@ -22,7 +22,6 @@ After running the "program" input the size of the board, example:
 *Note: minimum size is 5x5 board and coordinates are given as X-axis first, Y-axis second*
 
 ~~**Important:** *Console output may be slow for big sizes (ex. 50x50)*~~
-
 (Update: Fixed, you can now have large board sizes, like 50x50 or more... but why?)
 
 After that you'll enter 'Normal Mode'.
