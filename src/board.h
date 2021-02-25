@@ -30,6 +30,7 @@ enum class State : char {
 	E_HEAD = 'O',
 	E_TAIL = 'o',
 	CONDUCTOR = '#',
+	INITIALIZER = '@',
 };
 
 // Helper function, clear screen
@@ -74,7 +75,7 @@ class Board
 {
 public:
 	Board(size_t, size_t);
-	void print_board(bool drawInitializer = true);
+	void draw_initial_state();
 	void update(Inst);
 	void start_simulation();
 
@@ -87,6 +88,7 @@ private:
 		int posY;
 	} initializer;
 
+	void update_print_board();
 	void move_initializer(Direction);
 	int count_neighbours(int, int);
 	states_board get_next_states();

@@ -12,37 +12,51 @@ Board::Board(size_t row, size_t col) :
 // the '+1' is important when specifying a column
 // it SHIFTS everything by ONE to the right, BECAUSE
 // we are drawing additional ONE character at the beginning '|'
-void Board::print_board(bool drawInitializer)
+void Board::update_print_board()
 {
 	for (size_t i = 0; i < initial_board.size(); ++i)
 	{
-		// setCursorPosition(0, i);
-		// std::cout << '|';
-
 		for (size_t j = 0; j < initial_board[0].size(); ++j)
 		{
-			if (((size_t)initializer.posX == j && (size_t)initializer.posY == i))
-			{
-				setCursorPosition((int)j + 1, (int)i);
-				std::cout << (drawInitializer ? 'X' : static_cast<char>(initial_board[i][j]));
-				continue;
-			}
-
 			if (initial_board[i][j] == buffer_board[i][j])
 				continue;
 
-			setCursorPosition((int)j + 1, (int)i);
+			setCursorPosition(j + 1, i);
 			std::cout << static_cast<char>(initial_board[i][j]);
 		}
-
-		// setCursorPosition((int)initial_board[0].size(), i);
-		// std::cout << "|\n";
 	}
 
 	std::cout.flush();
+	buffer_board = initial_board;
+}
 
-	if (buffer_board != initial_board)
-		buffer_board = initial_board;
+void Board::draw_initial_state()
+{
+	cls(); // Clear screen for the board
+
+	for (size_t i = 0; i < initial_board.size(); ++i)
+	{
+		setCursorPosition(0, i);
+		std::cout << '|';
+
+		for (size_t j = 0; j < initial_board[0].size(); ++j)
+		{
+			if (j == initializer.posX && i == initializer.posY)
+			{
+				setCursorPosition(j + 1, i);
+				std::cout << static_cast<char>(State::INITIALIZER);
+				continue;
+			}
+
+			setCursorPosition(j + 1, i);
+			std::cout << static_cast<char>(initial_board[i][j]);
+		}
+
+		setCursorPosition(initial_board[0].size() + 1, i);
+		std::cout << "|\n";
+	}
+
+	std::cout.flush();
 }
 
 void Board::move_initializer(Direction direction)
@@ -53,24 +67,29 @@ void Board::move_initializer(Direction direction)
 	std::cout << static_cast<char>(initial_board[initializer.posY][initializer.posX]);
 	std::cout.flush();
 
-	// Wrap around
+	// calculate new position, wrap around
 	switch (direction)
 	{
 	case Direction::UP:
-		initializer.posY = initializer.posY - 1 < 0 ? (int)initial_board.size() - 1 : initializer.posY - 1;
+		initializer.posY = initializer.posY - 1 < 0 ? initial_board.size() - 1 : initializer.posY - 1;
 		break;
 	case Direction::DOWN:
-		initializer.posY = initializer.posY + 1 >= (int)initial_board.size() ? 0 : initializer.posY + 1;
+		initializer.posY = initializer.posY + 1 >= initial_board.size() ? 0 : initializer.posY + 1;
 		break;
 	case Direction::LEFT:
-		initializer.posX = initializer.posX - 1 < 0 ? (int)initial_board[0].size() - 1 : initializer.posX - 1;
+		initializer.posX = initializer.posX - 1 < 0 ? initial_board[0].size() - 1 : initializer.posX - 1;
 		break;
 	case Direction::RIGHT:
-		initializer.posX = initializer.posX + 1 >= (int)initial_board[0].size() ? 0 : initializer.posX + 1;
+		initializer.posX = initializer.posX + 1 >= initial_board[0].size() ? 0 : initializer.posX + 1;
 		break;
 	default:
 		assert(false && "uwu, unreachable: unrecognized direction!");
 	}
+
+	// Draw initializer at new position
+	setCursorPosition(initializer.posX + 1, initializer.posY);
+	std::cout << static_cast<char>(State::INITIALIZER);
+	std::cout.flush();
 }
 
 void Board::update(Inst instruction)
@@ -122,7 +141,7 @@ int Board::count_neighbours(int row, int col)
 			const int col_index = col + j;
 
 			// neighbour outside of boundaries
-			if (row_index < 0 || col_index < 0 || col_index >= (int)initial_board[0].size() || row_index >= (int)initial_board.size())
+			if (row_index < 0 || col_index < 0 || col_index >= initial_board[0].size() || row_index >= initial_board.size())
 				continue;
 
 			if (initial_board[row_index][col_index] == State::E_HEAD)
@@ -175,26 +194,39 @@ states_board Board::get_next_states()
 
 void Board::start_simulation()
 {
+	// Don't draw initializer
+	setCursorPosition(initializer.posX + 1, initializer.posY);
+	std::cout << static_cast<char>(initial_board[initializer.posY][initializer.posX]);
+	std::cout.flush();
+
 	const states_board original = initial_board;
 
 	while (true)
 	{
-		print_board(false); // Just updates the board, changes the char at initializer
 		const int c = _getch();
 
 		// 'e' = 101
 		// 'r' = 114
 
-		if (c == 101)
+		if (c == 101 || c == 69) // Nice
+		{
+			// Draw initializer again, we've quit the simulation
+			setCursorPosition(initializer.posX + 1, initializer.posY);
+			std::cout << static_cast<char>(State::INITIALIZER);
+			std::cout.flush();
 			break;
+		}
 
 		switch (c)
 		{
+		case 67:
 		case 114:
 			initial_board = original;
 			break;
 		default:
 			initial_board = get_next_states();
 		}
+
+		update_print_board();
 	}
 }

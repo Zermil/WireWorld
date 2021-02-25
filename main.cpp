@@ -21,35 +21,10 @@ int main(int charc, char* argv[])
 	}
 
 	Board board(row, col);
-	cls(); // Clear screen for the board
-
-	// Initial board draw, since I don't want to draw '|' character every time
-	// I update the board in some way (call print_board()), this works better for larger sizes
-	// and also it's the first thing that came to my mind, we have to 
-	// draw it anyway soooo...
-
-	// '+1' needed, because we're drawing '|' explained -> Board::print_board()
-	for (size_t i = 0; i < row; ++i)
-	{
-		setCursorPosition(0, i);
-		std::cout << '|';
-
-		for (size_t j = 0; j < col; ++j)
-		{
-			setCursorPosition((int)j + 1, (int)i);
-			std::cout << static_cast<char>(State::EMPTY);
-		}
-
-		setCursorPosition((int)col + 1, i);
-		std::cout << "|\n";
-	}
-
-	std::cout.flush();
+	board.draw_initial_state();
 	  
 	while (true)
 	{	
-		board.print_board(); // Drawing "again" because of initializer's position (NOT really again, just look for updates)
-
 		const int c = _getch();
 
 		// UP = 72
