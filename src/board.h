@@ -37,7 +37,7 @@ enum class State : char {
 static void cls()
 {
 	static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	CONSOLE_SCREEN_BUFFER_INFO csbi{};
 	COORD topLeft = { 0, 0 };
 
 	// Needed because we don't want to write out "junk" characters
@@ -75,8 +75,8 @@ class Board
 {
 public:
 	Board(size_t, size_t);
-	void draw_initial_state();
 	void update(Inst);
+	void draw_initial_state();
 	void start_simulation();
 
 private:
