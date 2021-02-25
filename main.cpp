@@ -97,6 +97,8 @@ int main(int charc, char* argv[])
 			break;
 		}
 	}
-
+  
+  setCursorPosition(0, row);
+	system("pause");
 	return 0;
 }
