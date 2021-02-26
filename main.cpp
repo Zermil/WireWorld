@@ -4,7 +4,7 @@
 #include <conio.h>
 #include "./src/board.h"
 
-int main(int charc, char* argv[])
+int main(int argc, char* argv[])
 {
 	size_t row;
 	size_t col;

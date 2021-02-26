@@ -3,6 +3,14 @@
 #include <string>
 #include "./board.h"
 
+Board::Board()
+	: initial_board(10, std::vector<State>(20, State::EMPTY)),
+	buffer_board(10, std::vector<State>(20, State::EMPTY)),
+	initializer({ 10, 5 })
+{
+	// Just for my OCD
+}
+
 Board::Board(size_t row, size_t col)
 	: initial_board(row, std::vector<State>(col, State::EMPTY)),
 	buffer_board(row, std::vector<State>(col, State::EMPTY)),

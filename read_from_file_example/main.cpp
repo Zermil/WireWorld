@@ -4,9 +4,17 @@
 #include <conio.h>
 #include "./../src/board.h"
 
-int main(int charc, char* argv[])
+int main(int argc, char* argv[])
 {
-	Board board("./board_files/xor_gate.board");
+  if (argc < 2)
+  {
+    std::cout << "Not enough arguments, usage: main <filePath>\n";
+    
+    std::cin.get();
+    exit(1);
+  }
+  
+	Board board(argv[1]);
 	board.draw_initial_state();
 
 	while (true)

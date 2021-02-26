@@ -74,6 +74,7 @@ typedef std::vector<std::vector<State>> states_board;
 class Board
 {
 public:
+	Board();
 	Board(size_t, size_t);
 	Board(std::string);
 
