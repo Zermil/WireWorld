@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	// Min-size of the board is 5x5 
 	if ((int)row <= 4 || (int)col <= 4)
 	{
-		std::cout << "Please provide big enough board!\n  minimal size: 5 5\n";
+		std::cout << "Please provide big enough board!\n  minimum size: 5 5\n";
 
 		system("pause");
 		exit(1);
