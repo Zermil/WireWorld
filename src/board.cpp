@@ -181,15 +181,19 @@ void Board::update(Inst instruction)
 		break;
 	case Inst::INST_CTE:
 		initial_board[initializer.posY][initializer.posX] = State::EMPTY;
+		buffer_board[initializer.posY][initializer.posX] = State::EMPTY;
 		break;
 	case Inst::INST_CTEH:
 		initial_board[initializer.posY][initializer.posX] = State::E_HEAD;
+		buffer_board[initializer.posY][initializer.posX] = State::E_HEAD;
 		break;
 	case Inst::INST_CTET:
 		initial_board[initializer.posY][initializer.posX] = State::E_TAIL;
+		buffer_board[initializer.posY][initializer.posX] = State::E_TAIL;
 		break;
 	case Inst::INST_CTC:
 		initial_board[initializer.posY][initializer.posX] = State::CONDUCTOR;
+		buffer_board[initializer.posY][initializer.posX] = State::CONDUCTOR;
 		break;
 	default:
 		assert(false && "uwu OwO!, unreachable: instruction not recognized!");
@@ -274,7 +278,6 @@ void Board::start_simulation()
 
 	while (true)
 	{
-		update_print_board();
 		const int c = _getch();
 
 		// 'e' = 101, 69
@@ -298,5 +301,7 @@ void Board::start_simulation()
 		default:
 			initial_board = get_next_states();
 		}
+
+		update_print_board();
 	}
 }

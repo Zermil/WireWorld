@@ -11,20 +11,19 @@ int main(int argc, char* argv[])
 
 	std::cin >> col >> row;
 
-	// Min-size of the board is 5x5 
 	if ((int)row <= 4 || (int)col <= 4)
 	{
-		std::cout << "Please provide big enough board!\n  minimum size: 5 5\n";
+		std::cout << "Please provide big enough board!\n  minimum dimensions: 5x5\n";
 
-		system("pause");
+		std::cin.get();
 		exit(1);
 	}
 
 	Board board(row, col);
 	board.draw_initial_state();
-	  
+
 	while (true)
-	{	
+	{
 		const int c = _getch();
 
 		// UP = 72
