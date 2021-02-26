@@ -28,14 +28,24 @@ After running the "program" input the size of the board, example:
 After that you'll enter 'Normal Mode'.
 ### `Normal Mode`:
 - `Arrow Keys`: Move
-- `'1'`: change state at indicator ('@') to empty -> ' '
-- `'2'`: change state at indicator ('@') to electron head -> 'O'
-- `'3'`: change state at indicator ('@') to electron tail -> 'o'
-- `'4'`: change state at indicator ('@') to conductor -> '#'
+- `'1'`: change state at indicator ('@') to EMPTY -> `' '`
+- `'2'`: change state at indicator ('@') to ELECTRON HEAD -> `'O'`
+- `'3'`: change state at indicator ('@') to ELECTRON TAIL -> `'o'`
+- `'4'`: change state at indicator ('@') to CONDUCTOR -> `'#'`
 - `SPACE`: Enter 'Simulation Mode'
 - `ESC`: Exit program
 
 ### `Simulation Mode`:
 - `'e'`: exit 'Simulation Mode' -> enter 'Normal Mode'
-- `'r'`: Restart simulation (loads the original state, from the last time you pressed `SPACE` in 'Normal Mode')
+- `'r'`: Restart 'Simulation'
 - `Any other key`: One step forward in 'Simulation'
+
+# Initialize from (text) file
+While initializing from file make sure:
+- All lines have the same length (no `SPACE` at the end)
+- Minimum size is also 5x5 (5 lines, 5 characters)
+- All signs are 'legal':
+	- `'.'` = (dot) EMPTY; for clarity and easier readability
+	- `'O'` = (big letter O) ELECTRON HEAD
+	- `'o'` = (small letter o) ELECTRON TAIL
+	- `'#'` = (hash) CONDUCTOR

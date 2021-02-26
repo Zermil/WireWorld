@@ -1,12 +1,83 @@
 #include <conio.h>
+#include <fstream>
+#include <string>
 #include "./board.h"
 
-Board::Board(size_t row, size_t col) : 
-	initial_board(row, std::vector<State>(col, State::EMPTY)),
+Board::Board(size_t row, size_t col)
+	: initial_board(row, std::vector<State>(col, State::EMPTY)),
 	buffer_board(row, std::vector<State>(col, State::EMPTY)),
 	initializer({ static_cast<int>(col / 2), static_cast<int>(row / 2) })
 {
 	// Just for my OCD
+}
+
+// Read initial_board from file
+Board::Board(std::string filePathName)
+{
+	size_t row = 0;
+	size_t col = 0;
+
+	std::string inputLine;
+	std::ifstream fileToRead(filePathName);
+
+	assert(fileToRead.is_open() && "OnO unu, Unable to open specified file!");
+
+	// First loop just to get dimensions and error check
+	while (getline(fileToRead, inputLine))
+	{
+		if (row == 0)
+			col = inputLine.length();
+		else if (inputLine.length() > col || inputLine.length() < col)
+			assert(false && "o3o Inconsistent number of columns in file!");
+
+		row++;
+	}
+
+	fileToRead.close();
+
+	if (row <= 4 || col <= 4)
+		assert(false && "Incorrect board size, expected minimum 5x5 board");
+
+	initializer.posX = static_cast<int>(col / 2);
+	initializer.posY = static_cast<int>(row / 2);
+
+	initial_board = states_board(row, std::vector<State>(col, State::EMPTY));
+
+	row = 0; // Reuse for counting iterations
+
+	// Open file again, no need to create another extra read buffer
+	fileToRead.open(filePathName);
+
+	while (getline(fileToRead, inputLine))
+	{
+		for (size_t i = 0; i < col; ++i)
+		{
+			char currentCharacter = inputLine[i];
+
+			switch (currentCharacter)
+			{
+			case '.':
+				initial_board[row][i] = State::EMPTY;
+				break;
+			case static_cast<char>(State::E_HEAD):
+				initial_board[row][i] = State::E_HEAD;
+				break;
+			case static_cast<char>(State::E_TAIL) :
+				initial_board[row][i] = State::E_TAIL;
+				break;
+			case static_cast<char>(State::CONDUCTOR) :
+				initial_board[row][i] = State::CONDUCTOR;
+				break;
+			default:
+				assert(false && "OvO, Unreachable: Illegal character detected!");
+			}
+		}
+
+		row++;
+	}
+
+	fileToRead.close();
+	buffer_board = initial_board;
 }
 
 // the '+1' is important when specifying a column
@@ -66,13 +137,13 @@ void Board::move_initializer(Direction direction)
 		initializer.posY = initializer.posY - 1 < 0 ? initial_board.size() - 1 : initializer.posY - 1;
 		break;
 	case Direction::DOWN:
-		initializer.posY = initializer.posY + 1 >= initial_board.size() ? 0 : initializer.posY + 1;
+		initializer.posY = initializer.posY + 1 >= (int)initial_board.size() ? 0 : initializer.posY + 1;
 		break;
 	case Direction::LEFT:
 		initializer.posX = initializer.posX - 1 < 0 ? initial_board[0].size() - 1 : initializer.posX - 1;
 		break;
 	case Direction::RIGHT:
-		initializer.posX = initializer.posX + 1 >= initial_board[0].size() ? 0 : initializer.posX + 1;
+		initializer.posX = initializer.posX + 1 >= (int)initial_board[0].size() ? 0 : initializer.posX + 1;
 		break;
 	default:
 		assert(false && "uwu, unreachable: unrecognized direction!");
@@ -112,7 +183,7 @@ void Board::update(Inst instruction)
 	case Inst::INST_CTC:
 		initial_board[initializer.posY][initializer.posX] = State::CONDUCTOR;
 		break;
-	default: 
+	default:
 		assert(false && "uwu OwO!, unreachable: instruction not recognized!");
 	}
 }
@@ -133,7 +204,7 @@ int Board::count_neighbours(int row, int col)
 			const int col_index = col + j;
 
 			// neighbour outside of boundaries
-			if (row_index < 0 || col_index < 0 || col_index >= initial_board[0].size() || row_index >= initial_board.size())
+			if (row_index < 0 || col_index < 0 || col_index >= (int)initial_board[0].size() || row_index >= (int)initial_board.size())
 				continue;
 
 			if (initial_board[row_index][col_index] == State::E_HEAD)
@@ -169,7 +240,7 @@ states_board Board::get_next_states()
 			case State::E_TAIL:
 				next_board[i][j] = State::CONDUCTOR;
 				break;
-			case State::CONDUCTOR: 
+			case State::CONDUCTOR:
 			{
 				const int e_head_neighbours_count = count_neighbours(i, j);
 				next_board[i][j] = (e_head_neighbours_count == 1 || e_head_neighbours_count == 2) ? State::E_HEAD : State::CONDUCTOR;

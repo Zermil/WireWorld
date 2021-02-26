@@ -2,29 +2,15 @@
 // https://en.wikipedia.org/wiki/Wireworld
 // =======================================
 #include <conio.h>
-#include "./src/board.h"
+#include "./../src/board.h"
 
 int main(int charc, char* argv[])
 {
-	size_t row;
-	size_t col;
-
-	std::cin >> col >> row;
-
-	// Min-size of the board is 5x5 
-	if ((int)row <= 4 || (int)col <= 4)
-	{
-		std::cout << "Please provide big enough board!\n  minimal size: 5 5\n";
-
-		system("pause");
-		exit(1);
-	}
-
-	Board board(row, col);
-	board.draw_initial_state();
-	  
+  Board board("./board_files/xor_gate.board");
+  board.draw_initial_state();
+  
 	while (true)
-	{	
+	{
 		const int c = _getch();
 
 		// UP = 72
@@ -74,7 +60,7 @@ int main(int charc, char* argv[])
 		}
 	}
 
-	setCursorPosition(0, row);
-	system("pause");
-	return 0;
+  setCursorPosition(0, board.getBoardRow());
+  system("pause");
+  return 0;
 }

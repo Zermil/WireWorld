@@ -1,10 +1,10 @@
 #ifndef BOARD_H_
 #define BOARD_H_
+#define WIN32_LEAN_AND_MEAN // Reduce global namespace pollution
 
 #include <iostream>
 #include <vector>
 #include <cassert>
-#define WIN32_LEAN_AND_MEAN // Reduce global namespace pollution
 #include <Windows.h>
 
 enum class Direction {
@@ -65,19 +65,22 @@ static void setCursorPosition(int x, int y)
 	static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coord = { (SHORT)x, (SHORT)y };
 	std::cout.flush();
-	
+
 	SetConsoleCursorPosition(hOut, coord);
 }
 
 typedef std::vector<std::vector<State>> states_board;
 
-class Board 
+class Board
 {
 public:
 	Board(size_t, size_t);
+	Board(std::string);
+
 	void update(Inst);
 	void draw_initial_state();
 	void start_simulation();
+	int getBoardRow() { return (int)initial_board.size(); }; // Utility for my OCD, so I can use it when calling system("pause") with set cursor
 
 private:
 	states_board initial_board;
