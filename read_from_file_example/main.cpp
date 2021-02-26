@@ -6,13 +6,13 @@
 
 int main(int argc, char* argv[])
 {
-  if (argc < 2)
-  {
-    std::cout << "Not enough arguments, usage: main <filePath>\n";
+  	if (argc < 2)
+  	{
+    		std::cout << "Not enough arguments, usage: main <filePath>\n";
     
-    std::cin.get();
-    exit(1);
-  }
+    		std::cin.get();
+    		exit(1);
+  	}
   
 	Board board(argv[1]);
 	board.draw_initial_state();
