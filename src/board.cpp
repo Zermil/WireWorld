@@ -36,16 +36,13 @@ void Board::draw_initial_state()
 
 	for (size_t i = 0; i < initial_board.size(); ++i)
 	{
-		setCursorPosition(0, i);
 		std::cout << '|';
 
 		for (size_t j = 0; j < initial_board[0].size(); ++j)
 		{
-			setCursorPosition(j + 1, i);
 			std::cout << static_cast<char>(initial_board[i][j]);
 		}
 
-		setCursorPosition(initial_board[0].size() + 1, i);
 		std::cout << "|\n";
 	}
 
@@ -198,10 +195,11 @@ void Board::start_simulation()
 
 	while (true)
 	{
+		update_print_board();
 		const int c = _getch();
 
-		// 'e' = 101
-		// 'r' = 114
+		// 'e' = 101, 69
+		// 'r' = 114, 67
 
 		if (c == 101 || c == 69) // Nice
 		{
@@ -221,7 +219,5 @@ void Board::start_simulation()
 		default:
 			initial_board = get_next_states();
 		}
-
-		update_print_board();
 	}
 }
