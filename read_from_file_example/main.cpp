@@ -6,9 +6,9 @@
 
 int main(int charc, char* argv[])
 {
-  Board board("./board_files/xor_gate.board");
-  board.draw_initial_state();
-  
+	Board board("./board_files/xor_gate.board");
+	board.draw_initial_state();
+
 	while (true)
 	{
 		const int c = _getch();
@@ -60,7 +60,7 @@ int main(int charc, char* argv[])
 		}
 	}
 
-  setCursorPosition(0, board.getBoardRow());
-  system("pause");
-  return 0;
+	setCursorPosition(0, board.getBoardRow());
+	system("pause");
+	return 0;
 }

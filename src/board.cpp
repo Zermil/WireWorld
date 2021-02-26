@@ -62,10 +62,10 @@ Board::Board(std::string filePathName)
 			case static_cast<char>(State::E_HEAD):
 				initial_board[row][i] = State::E_HEAD;
 				break;
-			case static_cast<char>(State::E_TAIL) :
+			case static_cast<char>(State::E_TAIL):
 				initial_board[row][i] = State::E_TAIL;
 				break;
-			case static_cast<char>(State::CONDUCTOR) :
+			case static_cast<char>(State::CONDUCTOR):
 				initial_board[row][i] = State::CONDUCTOR;
 				break;
 			default:
