@@ -229,11 +229,7 @@ int Board::count_neighbours(int row, int col)
 
 states_board Board::get_next_states()
 {
-	// static because we don't reallty care about 
-	// always initializing it with EMPTY, either
-	// way it's going to change every State inside it 
-	// according to initial_board
-	static states_board next_board(initial_board.size(), std::vector<State>(initial_board[0].size(), State::EMPTY));
+	states_board next_board(initial_board.size(), std::vector<State>(initial_board[0].size(), State::EMPTY));
 
 	for (size_t i = 0; i < initial_board.size(); ++i)
 	{

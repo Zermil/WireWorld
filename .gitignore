@@ -1,3 +1,4 @@
 *.txt
 *.exe
 read_from_file_example/*.bat
+menu_demo/*.bat
