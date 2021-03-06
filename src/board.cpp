@@ -20,7 +20,7 @@ Board::Board(size_t row, size_t col)
 }
 
 // Read initial_board from file
-Board::Board(std::string filePathName)
+Board::Board(const std::string& filePathName)
 {
 	size_t row = 0;
 	size_t col = 0;

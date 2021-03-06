@@ -76,7 +76,7 @@ class Board
 public:
 	Board();
 	Board(size_t, size_t);
-	Board(std::string);
+	Board(const std::string&);
 
 	void update(Inst);
 	void draw_initial_state();
