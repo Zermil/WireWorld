@@ -69,7 +69,7 @@ static void setCursorPosition(int x, int y)
 	SetConsoleCursorPosition(hOut, coord);
 }
 
-typedef std::vector<std::vector<State>> states_board;
+using states_board = std::vector<std::vector<State>>;
 
 class Board
 {
@@ -78,6 +78,7 @@ public:
 	Board(size_t, size_t);
 	Board(const std::string&);
 
+public:
 	void update(Inst);
 	void draw_initial_state();
 	void start_simulation();
@@ -92,6 +93,7 @@ private:
 		int posY;
 	} initializer;
 
+private:
 	void update_print_board();
 	void move_initializer(Direction);
 	int count_neighbours(int, int);
